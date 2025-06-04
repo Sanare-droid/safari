@@ -1,6 +1,15 @@
 import type { Metadata } from "next";
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton
+} from '@clerk/nextjs';
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Link from "next/link"; // Import Link for the logo
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,13 +31,64 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Basic inline styles for the header and buttons
+  const headerStyle: React.CSSProperties = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '1rem',
+    backgroundColor: '#f8f9fa',
+    borderBottom: '1px solid #e0e0e0'
+  };
+  const logoStyle: React.CSSProperties = {
+    fontWeight: 'bold',
+    textDecoration: 'none',
+    color: '#333'
+  };
+  const buttonBaseStyle: React.CSSProperties = {
+    padding: '0.5rem 1rem',
+    border: '1px solid #ccc',
+    borderRadius: '0.25rem',
+    backgroundColor: 'white',
+    cursor: 'pointer',
+    fontSize: '0.9rem'
+  };
+  const signUpButtonStyle: React.CSSProperties = {
+    ...buttonBaseStyle,
+    marginLeft: '0.5rem',
+    backgroundColor: '#28a745',
+    color: 'white',
+    borderColor: '#28a745'
+  };
+
+
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <header style={headerStyle}>
+            <Link href="/" style={logoStyle}>
+              Poured Petals
+            </Link>
+            <div>
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <button style={buttonBaseStyle}>Sign In</button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                  <button style={signUpButtonStyle}>Sign Up</button>
+                </SignUpButton>
+              </SignedOut>
+              <SignedIn>
+                <UserButton afterSignOutUrl="/" />
+              </SignedIn>
+            </div>
+          </header>
+          <main>{children}</main>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

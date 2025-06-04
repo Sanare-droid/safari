@@ -1,8 +1,46 @@
+"use client"; // Make this a client component
+
+import React, { useState } from 'react';
+
 export default function Home() {
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setMessage('');
+
+    try {
+      const response = await fetch('/api/newsletter-signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage(data.message || 'Successfully subscribed!');
+        setEmail(''); // Clear email field on success
+      } else {
+        setMessage(data.message || 'Subscription failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Newsletter signup error:', error);
+      setMessage('An error occurred. Please try again later.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24 bg-pink-50 text-gray-800">
+    <main className="flex min-h-screen flex-col items-center bg-pink-50 text-gray-800"> {/* Removed justify-between and p-24 for full page flow */}
       {/* Hero Section */}
-      <section className="w-full max-w-5xl text-center py-12">
+      <section className="w-full max-w-5xl text-center py-12 px-4 sm:px-6 lg:px-8 mt-10"> {/* Added some top margin */}
         <h1 className="text-5xl font-bold text-pink-700 mb-6">
           Poured Petals
         </h1>
@@ -77,6 +115,38 @@ export default function Home() {
             <h3 className="text-xl font-semibold text-pink-600 mb-2">3. Create & Enjoy</h3>
             <p className="text-gray-600">Attend the workshop, learn the techniques, and create your beautiful floral piece!</p>
           </div>
+        </div>
+      </section>
+
+      {/* Newsletter Signup Section */}
+      <section className="w-full bg-pink-100 py-16 mt-12"> {/* Added mt-12 for spacing */}
+        <div className="max-w-2xl mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold text-pink-700 mb-4">Stay in the Loop!</h2>
+          <p className="text-lg text-gray-600 mb-8">
+            Subscribe to our newsletter for the latest updates on new workshops, special offers, and creative tips.
+          </p>
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row justify-center max-w-md mx-auto">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email address"
+              className="flex-grow p-3 border border-pink-300 rounded-md sm:rounded-l-md sm:rounded-r-none focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none text-gray-700"
+              required
+            />
+            <button
+              type="submit"
+              className="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-6 rounded-md sm:rounded-r-md sm:rounded-l-none mt-3 sm:mt-0 shadow-md transition duration-300 disabled:opacity-50"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Subscribing...' : 'Subscribe'}
+            </button>
+          </form>
+          {message && (
+            <p className={`mt-6 text-md ${message.startsWith('Successfully') ? 'text-green-600' : 'text-red-600'}`}>
+              {message}
+            </p>
+          )}
         </div>
       </section>
     </main>

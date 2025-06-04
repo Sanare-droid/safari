@@ -1,0 +1,31 @@
+---
+title: "My First MDX Blog Post"
+date: "2024-07-30"
+excerpt: "This is a short summary of my first blog post using MDX in Next.js."
+author: "Poured Petals Team"
+---
+
+import {Fragment} from "react"; // Or any component you want to use
+
+# Welcome to Our Blog!
+
+This is our first post written in **MDX**. It's a fantastic way to blend Markdown with React components.
+
+## Key Features of MDX
+
+- Write in Markdown for content readability.
+- Embed React components directly within your Markdown.
+- Leverage frontmatter for metadata like title, date, etc.
+
+Here's an example of using a simple JSX element:
+<div style={{ padding: '1rem', backgroundColor: '#e0f7fa', borderLeft: '4px solid #00bcd4', margin: '1rem 0' }}>
+  <p style={{ margin: 0, color: '#00796b', fontWeight: 'bold' }}>This is a JSX block inside MDX!</p>
+</div>
+
+We're excited to share more updates and insights through our blog. Stay tuned!
+
+---
+
+*Published on: {new Date(frontmatter.date).toLocaleDateString()} by {frontmatter.author}*
+
+*(Note: Accessing frontmatter directly like this in the body might require additional setup with a layout or MDX provider. For now, this is illustrative.)*
